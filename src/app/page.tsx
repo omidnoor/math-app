@@ -185,7 +185,7 @@ export default function Home() {
               className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-lg font-semibold text-white shadow-xl transition hover:-translate-y-0.5 hover:shadow-2xl"
             >
               <span className="relative z-10">
-                <TranslatableText tKey="nav.startLearning" />
+                Start Learning Now
               </span>
               <span className="absolute inset-0 translate-y-full bg-gradient-to-r from-purple-600 to-pink-600 transition group-hover:translate-y-0"></span>
             </Link>
@@ -193,7 +193,7 @@ export default function Home() {
               href="/teacher"
               className="rounded-xl border-2 border-indigo-200 bg-white px-8 py-4 text-lg font-semibold text-indigo-600 shadow-lg transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-xl"
             >
-              <TranslatableText tKey="nav.teacherResources" />
+              Teacher Resources
             </Link>
           </motion.div>
         </div>

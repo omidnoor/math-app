@@ -1,8 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import * as d3 from 'd3';
-import type { D3DragEvent } from 'd3';
+import type { PointerEvent as ReactPointerEvent } from 'react';
 
 type ParabolaParams = { a: number; h: number; k: number };
 
@@ -21,6 +20,11 @@ interface InteractiveParabolaProps {
   controlledParams?: ParabolaParams;
 }
 
+const DOMAIN_MIN = -8;
+const DOMAIN_MAX = 8;
+const DOMAIN_SIZE = DOMAIN_MAX - DOMAIN_MIN;
+const PARAM_BOUNDS = { min: -7, max: 7 };
+
 export default function InteractiveParabola({
   initialA = 1,
   initialH = 0,
@@ -35,17 +39,59 @@ export default function InteractiveParabola({
   onParamsChange,
   controlledParams,
 }: InteractiveParabolaProps) {
-  const svgRef = useRef<SVGSVGElement | null>(null);
   const [internalParams, setInternalParams] = useState<ParabolaParams>({
     a: initialA,
     h: initialH,
     k: initialK,
   });
+  const [activePointer, setActivePointer] = useState<number | null>(null);
 
   const params = controlledParams ?? internalParams;
   const { a, h, k } = params;
 
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const vertexRef = useRef<SVGCircleElement | null>(null);
+
   const lockedSet = useMemo(() => new Set(lockedParams), [lockedParams]);
+  const ticks = useMemo(() => {
+    const values: number[] = [];
+    for (let value = DOMAIN_MIN; value <= DOMAIN_MAX; value += 1) {
+      values.push(value);
+    }
+    return values;
+  }, []);
+
+  const margin = { top: 32, right: 24, bottom: 48, left: 48 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
+  const toSvgX = useCallback(
+    (value: number) => ((value - DOMAIN_MIN) / DOMAIN_SIZE) * innerWidth,
+    [innerWidth],
+  );
+  const toSvgY = useCallback(
+    (value: number) => innerHeight - ((value - DOMAIN_MIN) / DOMAIN_SIZE) * innerHeight,
+    [innerHeight],
+  );
+  const fromSvgX = useCallback(
+    (pixel: number) => DOMAIN_MIN + (pixel / innerWidth) * DOMAIN_SIZE,
+    [innerWidth],
+  );
+  const fromSvgY = useCallback(
+    (pixel: number) =>
+      DOMAIN_MIN + ((innerHeight - pixel) / innerHeight) * DOMAIN_SIZE,
+    [innerHeight],
+  );
+
+  const points = useMemo(() => {
+    const data: Array<{ x: number; y: number }> = [];
+    for (let xValue = DOMAIN_MIN; xValue <= DOMAIN_MAX; xValue += 0.1) {
+      data.push({ x: xValue, y: a * (xValue - h) ** 2 + k });
+    }
+    return data;
+  }, [a, h, k]);
+
+  const pathData = useMemo(() => buildPathData(points, toSvgX, toSvgY), [points, toSvgX, toSvgY]);
 
   const updateParams = useCallback(
     (next: ParabolaParams) => {
@@ -57,180 +103,211 @@ export default function InteractiveParabola({
     [controlledParams, onParamsChange],
   );
 
-  useEffect(() => {
-    if (!svgRef.current) return;
-
-    const margin = { top: 32, right: 24, bottom: 48, left: 48 };
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
-
-    const svg = d3
-      .select(svgRef.current)
-      .attr('width', width)
-      .attr('height', height)
-      .attr('role', 'img')
-      .attr('aria-label', 'Interactive parabola graph');
-
-    svg.selectAll('*').remove();
-
-    const g = svg
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
-
-    const xScale = d3.scaleLinear().domain([-8, 8]).range([0, innerWidth]);
-    const yScale = d3.scaleLinear().domain([-8, 8]).range([innerHeight, 0]);
-
-    if (showGrid) {
-      const gridValues = d3.range(-8, 9);
-      g.append('g')
-        .selectAll('line.vertical')
-        .data(gridValues)
-        .join('line')
-        .attr('x1', (value) => xScale(value))
-        .attr('x2', (value) => xScale(value))
-        .attr('y1', 0)
-        .attr('y2', innerHeight)
-        .attr('stroke', (value) => (value === 0 ? '#1f2937' : '#e2e8f0'))
-        .attr('stroke-width', (value) => (value === 0 ? 1.6 : 0.6))
-        .attr('opacity', (value) => (value === 0 ? 0.6 : 0.3));
-
-      g.append('g')
-        .selectAll('line.horizontal')
-        .data(gridValues)
-        .join('line')
-        .attr('y1', (value) => yScale(value))
-        .attr('y2', (value) => yScale(value))
-        .attr('x1', 0)
-        .attr('x2', innerWidth)
-        .attr('stroke', (value) => (value === 0 ? '#1f2937' : '#e2e8f0'))
-        .attr('stroke-width', (value) => (value === 0 ? 1.6 : 0.6))
-        .attr('opacity', (value) => (value === 0 ? 0.6 : 0.3));
-    }
-
-    const axisBottom = d3.axisBottom(xScale).ticks(8);
-    const axisLeft = d3.axisLeft(yScale).ticks(8);
-
-    g.append('g')
-      .attr('transform', `translate(0,${yScale(0)})`)
-      .call(axisBottom)
-      .selectAll('text')
-      .attr('font-size', 12);
-
-    g.append('g')
-      .attr('transform', `translate(${xScale(0)},0)`)
-      .call(axisLeft)
-      .selectAll('text')
-      .attr('font-size', 12);
-
-    const parabolaPoints = d3.range(-8, 8.05, 0.05).map((xValue) => ({
-      x: xValue,
-      y: a * (xValue - h) * (xValue - h) + k,
-    }));
-
-    const lineGenerator = d3
-      .line<{ x: number; y: number }>()
-      .x((point) => xScale(point.x))
-      .y((point) => yScale(point.y));
-
-    g.append('path')
-      .datum(parabolaPoints)
-      .attr('d', lineGenerator)
-      .attr('fill', 'none')
-      .attr('stroke', a >= 0 ? '#2563eb' : '#f97316')
-      .attr('stroke-width', 3);
-
-    if (showAxis) {
-      g.append('line')
-        .attr('x1', xScale(h))
-        .attr('x2', xScale(h))
-        .attr('y1', 0)
-        .attr('y2', innerHeight)
-        .attr('stroke', '#10b981')
-        .attr('stroke-width', 2)
-        .attr('stroke-dasharray', '6 4')
-        .attr('opacity', 0.7);
-
-      g.append('text')
-        .attr('x', xScale(h) + 8)
-        .attr('y', 18)
-        .attr('fill', '#047857')
-        .attr('font-size', 12)
-        .attr('font-weight', '600')
-        .text(`x = ${h.toFixed(1)}`);
-    }
-
-    if (showVertex) {
+  const applyDragPosition = useCallback(
+    (xPixel: number, yPixel: number) => {
       const canDragH = !lockedSet.has('h');
       const canDragK = !lockedSet.has('k');
+      if (!canDragH && !canDragK) return;
 
-      const vertexGroup = g.append('g').attr('class', 'vertex-group');
+      const clampedX = clamp(xPixel, 0, innerWidth);
+      const clampedY = clamp(yPixel, 0, innerHeight);
 
-      const vertex = vertexGroup
-        .append('circle')
-        .attr('cx', xScale(h))
-        .attr('cy', yScale(k))
-        .attr('r', 9)
-        .attr('fill', '#ef4444')
-        .attr('stroke', '#ffffff')
-        .attr('stroke-width', 2)
-        .style('cursor', canDragH || canDragK ? 'grab' : 'default');
+      const next: ParabolaParams = { a, h, k };
 
-      vertexGroup
-        .append('text')
-        .attr('x', xScale(h) + 12)
-        .attr('y', yScale(k) - 12)
-        .attr('fill', '#1e293b')
-        .attr('font-size', 12)
-        .attr('font-weight', '600')
-        .text(`(${h.toFixed(1)}, ${k.toFixed(1)})`);
-
-      if (canDragH || canDragK) {
-        const dragBehavior = d3
-          .drag<SVGCircleElement, unknown>()
-          .on('drag', (event: D3DragEvent<SVGCircleElement, unknown, unknown>) => {
-            const next: ParabolaParams = { a, h, k };
-
-            if (canDragH) {
-              const newH = Math.round(xScale.invert(event.x) * 2) / 2;
-              next.h = clamp(newH, -7, 7);
-            }
-
-            if (canDragK) {
-              const newK = Math.round(yScale.invert(event.y) * 2) / 2;
-              next.k = clamp(newK, -7, 7);
-            }
-
-            updateParams(next);
-          });
-
-        vertex.call(dragBehavior);
+      if (canDragH) {
+        const newH = clamp(roundToHalf(fromSvgX(clampedX)), PARAM_BOUNDS.min, PARAM_BOUNDS.max);
+        next.h = newH;
       }
-    }
-  }, [
-    a,
-    h,
-    k,
-    height,
-    lockedSet,
-    showAxis,
-    showGrid,
-    showVertex,
-    width,
-    updateParams,
-  ]);
+
+      if (canDragK) {
+        const newK = clamp(roundToHalf(fromSvgY(clampedY)), PARAM_BOUNDS.min, PARAM_BOUNDS.max);
+        next.k = newK;
+      }
+
+      updateParams(next);
+    },
+    [a, h, k, fromSvgX, fromSvgY, innerHeight, innerWidth, lockedSet, updateParams],
+  );
+
+  const startDrag = useCallback(
+    (event: ReactPointerEvent<SVGCircleElement>) => {
+      if (!showVertex) return;
+      if (lockedSet.has('h') && lockedSet.has('k')) return;
+      event.preventDefault();
+      setActivePointer(event.pointerId);
+      vertexRef.current = event.currentTarget;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      if (svgRef.current) {
+        const rect = svgRef.current.getBoundingClientRect();
+        const x = event.clientX - rect.left - margin.left;
+        const y = event.clientY - rect.top - margin.top;
+        applyDragPosition(x, y);
+      }
+    },
+    [applyDragPosition, lockedSet, margin.left, margin.top, showVertex],
+  );
 
   useEffect(() => {
-    if (controlledParams) {
-      setInternalParams(controlledParams);
-    }
-  }, [controlledParams]);
+    if (activePointer === null) return;
+
+    const handleMove = (event: PointerEvent) => {
+      if (!svgRef.current) return;
+      const rect = svgRef.current.getBoundingClientRect();
+      const x = event.clientX - rect.left - margin.left;
+      const y = event.clientY - rect.top - margin.top;
+      applyDragPosition(x, y);
+    };
+
+    const handleEnd = (event: PointerEvent) => {
+      if (event.pointerId !== activePointer) return;
+      if (vertexRef.current?.hasPointerCapture(event.pointerId)) {
+        vertexRef.current.releasePointerCapture(event.pointerId);
+      }
+      setActivePointer(null);
+    };
+
+    window.addEventListener('pointermove', handleMove);
+    window.addEventListener('pointerup', handleEnd);
+    window.addEventListener('pointercancel', handleEnd);
+
+    return () => {
+      window.removeEventListener('pointermove', handleMove);
+      window.removeEventListener('pointerup', handleEnd);
+      window.removeEventListener('pointercancel', handleEnd);
+    };
+  }, [activePointer, applyDragPosition, margin.left, margin.top]);
 
   return (
     <div className="flex flex-col items-center gap-4">
       <svg
         ref={svgRef}
-        className="w-full max-w-3xl rounded-xl border border-slate-200 bg-white shadow-md"
-      />
+        width={width}
+        height={height}
+        role="img"
+        aria-label="Interactive parabola graph"
+        className="w-full max-w-3xl select-none rounded-xl border border-slate-200 bg-white shadow-md"
+      >
+        <g transform={`translate(${margin.left}, ${margin.top})`}>
+          {showGrid &&
+            ticks.map((tick) => (
+              <g key={`grid-${tick}`}>
+                <line
+                  x1={toSvgX(tick)}
+                  x2={toSvgX(tick)}
+                  y1={0}
+                  y2={innerHeight}
+                  stroke={tick === 0 ? '#1e293b' : '#e2e8f0'}
+                  strokeWidth={tick === 0 ? 1.6 : 0.8}
+                  opacity={tick === 0 ? 0.6 : 0.3}
+                />
+                <line
+                  x1={0}
+                  x2={innerWidth}
+                  y1={toSvgY(tick)}
+                  y2={toSvgY(tick)}
+                  stroke={tick === 0 ? '#1e293b' : '#e2e8f0'}
+                  strokeWidth={tick === 0 ? 1.6 : 0.8}
+                  opacity={tick === 0 ? 0.6 : 0.3}
+                />
+              </g>
+            ))}
+
+          {showAxis && (
+            <>
+              <line
+                x1={toSvgX(h)}
+                x2={toSvgX(h)}
+                y1={0}
+                y2={innerHeight}
+                stroke="#10b981"
+                strokeWidth={2}
+                strokeDasharray="6 4"
+                opacity={0.75}
+              />
+              <text x={toSvgX(h) + 8} y={16} fill="#047857" fontSize={12} fontWeight={600}>
+                x = {h.toFixed(1)}
+              </text>
+            </>
+          )}
+
+          <path
+            d={pathData}
+            fill="none"
+            stroke={a >= 0 ? '#2563eb' : '#f97316'}
+            strokeWidth={3}
+          />
+
+          <line
+            x1={0}
+            x2={innerWidth}
+            y1={toSvgY(0)}
+            y2={toSvgY(0)}
+            stroke="#1e293b"
+            strokeWidth={1.2}
+          />
+          <line
+            x1={toSvgX(0)}
+            x2={toSvgX(0)}
+            y1={0}
+            y2={innerHeight}
+            stroke="#1e293b"
+            strokeWidth={1.2}
+          />
+
+          {ticks.map((tick) => (
+            <text
+              key={`tick-x-${tick}`}
+              x={toSvgX(tick)}
+              y={toSvgY(0) + 20}
+              fontSize={12}
+              textAnchor="middle"
+              fill="#1e293b"
+            >
+              {tick}
+            </text>
+          ))}
+          {ticks.map((tick) => (
+            <text
+              key={`tick-y-${tick}`}
+              x={toSvgX(0) - 10}
+              y={toSvgY(tick) + 4}
+              fontSize={12}
+              textAnchor="end"
+              fill="#1e293b"
+            >
+              {tick}
+            </text>
+          ))}
+
+          {showVertex && (
+            <g>
+              <circle
+                ref={vertexRef}
+                cx={toSvgX(h)}
+                cy={toSvgY(k)}
+                r={10}
+                fill="#ef4444"
+                stroke="#ffffff"
+                strokeWidth={3}
+                onPointerDown={startDrag}
+                style={{
+                  cursor: !lockedSet.has('h') || !lockedSet.has('k') ? 'grab' : 'default',
+                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.25))',
+                }}
+              />
+              <text
+                x={toSvgX(h) + 14}
+                y={toSvgY(k) - 14}
+                fill="#1e293b"
+                fontSize={12}
+                fontWeight={600}
+              >
+                ({h.toFixed(1)}, {k.toFixed(1)})
+              </text>
+            </g>
+          )}
+        </g>
+      </svg>
 
       {showEquation && (
         <div className="w-full max-w-2xl rounded-xl border border-indigo-100 bg-indigo-50 px-5 py-4 text-center shadow-sm">
@@ -249,7 +326,25 @@ export default function InteractiveParabola({
   );
 }
 
-function clamp(value: number, min: number, max: number): number {
+function buildPathData(
+  points: Array<{ x: number; y: number }>,
+  toX: (value: number) => number,
+  toY: (value: number) => number,
+) {
+  if (points.length === 0) return '';
+  let path = `M ${toX(points[0].x)} ${toY(points[0].y)}`;
+  for (let index = 1; index < points.length; index += 1) {
+    const point = points[index];
+    path += ` L ${toX(point.x)} ${toY(point.y)}`;
+  }
+  return path;
+}
+
+function roundToHalf(value: number) {
+  return Math.round(value * 2) / 2;
+}
+
+function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 

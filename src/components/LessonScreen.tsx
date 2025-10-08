@@ -1,11 +1,17 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import type { GraphSpec, Lesson } from '@/types';
 import { TranslatableText } from './TranslatableText';
 import InteractiveParabola from './InteractiveParabola';
 import { HingeQuestion } from './HingeQuestion';
 import { safeTranslate } from '@/lib/content/i18n';
+import { lessonOrder, lessons } from '@/data/lessons';
+import { StepRevealer } from './StepRevealer';
+import { DecisionTree } from './DecisionTree';
+import { IntervalTester } from './IntervalTester';
+import { GraphPlaceholder } from './GraphPlaceholder';
 
 interface LessonScreenProps {
   lesson: Lesson;
@@ -39,6 +45,16 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
   useEffect(() => {
     setGraphStates(initialGraphStates);
   }, [initialGraphStates]);
+
+  const nextLessonId = useMemo(() => {
+    const index = lessonOrder.indexOf(lesson.id);
+    if (index === -1 || index === lessonOrder.length - 1) {
+      return null;
+    }
+    return lessonOrder[index + 1];
+  }, [lesson.id]);
+
+  const nextLesson = nextLessonId ? lessons[nextLessonId] : undefined;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-indigo-50 pb-16">
@@ -97,78 +113,108 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
 
               {graphConfig && (
                 <div className="space-y-6">
-                  <InteractiveParabola
-                    initialA={Number(graphConfig.params.a ?? 1)}
-                    initialH={Number(graphConfig.params.h ?? 0)}
-                    initialK={Number(graphConfig.params.k ?? 0)}
-                    lockedParams={graphConfig.lockedParams}
-                    controlledParams={hasSliders ? controlledState : undefined}
-                    onParamsChange={
-                      hasSliders
-                        ? (next) => {
-                            setGraphStates((prev) => ({
-                              ...prev,
-                              [step.id]: next,
-                            }));
-                          }
-                        : undefined
-                    }
-                  />
+                  {graphConfig.type === 'parabola' ? (
+                    <>
+                      <InteractiveParabola
+                        initialA={Number(graphConfig.params.a ?? 1)}
+                        initialH={Number(graphConfig.params.h ?? 0)}
+                        initialK={Number(graphConfig.params.k ?? 0)}
+                        lockedParams={graphConfig.lockedParams}
+                        controlledParams={hasSliders ? controlledState : undefined}
+                        onParamsChange={
+                          hasSliders
+                            ? (next) => {
+                                setGraphStates((prev) => ({
+                                  ...prev,
+                                  [step.id]: next,
+                                }));
+                              }
+                            : undefined
+                        }
+                      />
 
-                  {hasSliders && controlledState && (
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {graphConfig.sliders?.map((slider) => (
-                        <label
-                          key={`${step.id}-${slider.param}`}
-                          className="flex flex-col rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-900"
-                        >
-                          <span className="mb-2">{slider.label}</span>
-                          <input
-                            type="range"
-                            min={slider.min}
-                            max={slider.max}
-                            step={slider.step}
-                            value={controlledState[slider.param]}
-                            onChange={(event) => {
-                              const value = Number(event.target.value);
-                              setGraphStates((prev) => ({
-                                ...prev,
-                                [step.id]: {
-                                  ...prev[step.id],
-                                  [slider.param]: value,
-                                },
-                              }));
-                            }}
-                            className="accent-indigo-600"
-                          />
-                          <span className="mt-1 text-xs text-indigo-700">
-                            {slider.param} = {controlledState[slider.param].toFixed(1)}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
+                      {hasSliders && controlledState && (
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          {graphConfig.sliders?.map((slider) => (
+                            <label
+                              key={`${step.id}-${slider.param}`}
+                              className="flex flex-col rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-900"
+                            >
+                              <TranslatableText tKey={slider.label} className="mb-2" />
+                              <input
+                                type="range"
+                                min={slider.min}
+                                max={slider.max}
+                                step={slider.step}
+                                value={controlledState[slider.param]}
+                                onChange={(event) => {
+                                  const value = Number(event.target.value);
+                                  setGraphStates((prev) => ({
+                                    ...prev,
+                                    [step.id]: {
+                                      ...prev[step.id],
+                                      [slider.param]: value,
+                                    },
+                                  }));
+                                }}
+                                className="accent-indigo-600"
+                              />
+                              <span className="mt-1 text-xs text-indigo-700">
+                                {slider.param} = {controlledState[slider.param].toFixed(1)}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <GraphPlaceholder type={graphConfig.type} />
                   )}
                 </div>
               )}
 
               {step.interactive?.type === 'graphAlgebraSync' && (
                 <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
-                  <p className="font-semibold">
-                    Summarize the features you observe in the graph above.
-                  </p>
+                  <TranslatableText
+                    tKey="lesson.graphSync.helper"
+                    as="p"
+                    className="font-semibold"
+                  />
                   <ul className="mt-3 space-y-2">
                     {Array.isArray(step.interactive.config.prompts) &&
-                      (step.interactive.config.prompts as string[]).map((prompt) => (
-                        <li key={prompt} className="flex items-center gap-2">
+                      (step.interactive.config.prompts as string[]).map((promptKey) => (
+                        <li key={promptKey} className="flex items-center gap-2">
                           <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-amber-200 text-xs font-semibold text-amber-900">
                             ✔
                           </span>
-                          <span className="font-medium capitalize text-amber-900">
-                            {safeTranslate(`prompt.${prompt}`, 'en') ?? prompt}
+                          <span className="font-medium text-amber-900">
+                            {safeTranslate(promptKey)}
                           </span>
                         </li>
                       ))}
                   </ul>
+                </div>
+              )}
+              {step.interactive?.type === 'stepRevealer' && (
+                <div className="mt-6">
+                  <StepRevealer
+                    steps={(step.interactive.config.steps as string[]) ?? []}
+                  />
+                </div>
+              )}
+              {step.interactive?.type === 'decisionTree' && (
+                <div className="mt-6">
+                  <DecisionTree
+                    rootPrompt={(step.interactive.config.rootPrompt as string) ?? ''}
+                    branches={(step.interactive.config.branches as string[]) ?? []}
+                  />
+                </div>
+              )}
+              {step.interactive?.type === 'intervalTester' && (
+                <div className="mt-6">
+                  <IntervalTester
+                    prompts={(step.interactive.config.prompts as string[]) ?? []}
+                  />
                 </div>
               )}
             </section>
@@ -188,6 +234,73 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
             </div>
           </section>
         )}
+
+        <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg">
+          <TranslatableText
+            tKey="lesson.summary.title"
+            as="h2"
+            className="text-2xl font-semibold text-slate-900"
+          />
+          <TranslatableText
+            tKey="lesson.summary.reflectionPrompt"
+            as="p"
+            className="mt-2 text-sm text-slate-600"
+          />
+
+          {lesson.goals.length > 0 && (
+            <div className="mt-6">
+              <TranslatableText
+                tKey="lesson.summary.successHeadline"
+                as="h3"
+                className="text-sm font-semibold uppercase tracking-wide text-indigo-500"
+              />
+              <ul className="mt-3 list-disc space-y-2 pl-6 text-sm text-slate-700">
+                {lesson.goals.map((goalKey) => (
+                  <li key={`summary-${goalKey}`}>
+                    <TranslatableText tKey={goalKey} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {nextLesson ? (
+              <>
+                <div>
+                  <TranslatableText
+                    tKey="lesson.summary.nextLabel"
+                    as="p"
+                    className="text-sm font-semibold uppercase tracking-wide text-indigo-500"
+                  />
+                  <p className="text-lg font-semibold text-indigo-900">
+                    {safeTranslate(nextLesson.titleKey)}
+                  </p>
+                </div>
+                <Link
+                  href={`/lesson/${nextLesson.id}`}
+                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-2xl"
+                >
+                  <TranslatableText tKey="lesson.summary.cta.next" />
+                </Link>
+              </>
+            ) : (
+              <>
+                <TranslatableText
+                  tKey="lesson.summary.complete"
+                  as="p"
+                  className="text-lg font-semibold text-emerald-600"
+                />
+                <Link
+                  href="/"
+                  className="inline-flex items-center justify-center rounded-xl border-2 border-emerald-300 bg-white px-6 py-3 text-sm font-semibold text-emerald-700 shadow-md transition hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-lg"
+                >
+                  <TranslatableText tKey="lesson.summary.cta.home" />
+                </Link>
+              </>
+            )}
+          </div>
+        </section>
       </main>
     </div>
   );

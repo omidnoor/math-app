@@ -9,9 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@types/d3": "^7.4.3",
     "@types/katex": "^0.16.7",
-    "d3": "^7.9.0",
     "framer-motion": "^12.23.22",
     "katex": "^0.16.23",
     "next": "15.5.4",
