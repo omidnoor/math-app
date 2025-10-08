@@ -49,8 +49,7 @@ export function MethodPractice({ problems }: MethodPracticeProps) {
   );
 
   const [selections, setSelections] = useState<Record<string, MethodChoice | null>>(
-    () =>
-      Object.fromEntries(normalizedProblems.map((p) => [p.id, null])),
+    () => Object.fromEntries(normalizedProblems.map((p) => [p.id, null])),
   );
   const [revealed, setRevealed] = useState<Record<string, boolean>>(
     () => Object.fromEntries(normalizedProblems.map((p) => [p.id, false])),
@@ -61,18 +60,21 @@ export function MethodPractice({ problems }: MethodPracticeProps) {
     setRevealed(Object.fromEntries(normalizedProblems.map((p) => [p.id, false])));
   }, [normalizedProblems]);
 
-  if (!normalizedProblems.length) {
-    return null;
-  }
+  if (!normalizedProblems.length) return null;
 
   return (
     <div className="rounded-3xl border border-purple-200 bg-white p-6 shadow-inner">
-      <h3 className="text-lg font-semibold text-purple-900">
-        Choose the most efficient method
-      </h3>
-      <p className="mt-1 text-sm text-purple-700">
-        Look at the structure before selecting a solving tool.
-      </p>
+      <h3 className="text-lg font-semibold text-purple-900">Choose the most efficient method</h3>
+      <p className="mt-1 text-sm text-purple-700">Look at the structure before selecting a solving tool.</p>
+      <div className="mt-3 rounded-2xl border border-purple-200 bg-purple-50 p-4 text-sm text-purple-900">
+        <p className="font-semibold">How to choose</p>
+        <ul className="mt-2 list-disc space-y-1 pl-5">
+          <li>If a squared chunk is isolated (something)^2 = number, pick the square-root method.</li>
+          <li>If coefficients factor nicely, choose factoring (zero product rule).</li>
+          <li>If you want the vertex or a completed pattern, use completing the square.</li>
+          <li>If nothing is friendly or you need a guaranteed path, use the quadratic formula.</li>
+        </ul>
+      </div>
 
       <div className="mt-6 space-y-6">
         {normalizedProblems.map((problem) => {
@@ -82,10 +84,7 @@ export function MethodPractice({ problems }: MethodPracticeProps) {
           const stepsVisible = revealed[problem.id];
 
           return (
-            <div
-              key={problem.id}
-              className="rounded-2xl border border-purple-100 bg-purple-50 p-5 shadow-sm"
-            >
+            <div key={problem.id} className="rounded-2xl border border-purple-100 bg-purple-50 p-5 shadow-sm">
               <p className="font-medium text-purple-900">{problem.prompt}</p>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -122,11 +121,9 @@ export function MethodPractice({ problems }: MethodPracticeProps) {
                   }`}
                 >
                   {isCorrect
-                    ? 'Great choice—this fits the structure.'
+                    ? 'Great choice - this fits the structure.'
                     : 'That works, but another method is more direct.'}
-                  <div className="mt-2 text-xs text-purple-700">
-                    {problem.explanation}
-                  </div>
+                  <div className="mt-2 text-xs text-purple-700">{problem.explanation}</div>
                 </div>
               )}
 

@@ -236,7 +236,9 @@ export const lessons: Record<LessonId, Lesson> = {
             cases: [
               {
                 id: 'square-root-branch',
-                work: '(x - 4)^2 = 25\nx - 4 = 5\nx = 9',
+                
+                work: '(x - 4)^2 = 25\\nx - 4 = 5\\nx = 9',
+                fix: '(x - 4)^2 = 25\\nx - 4 = +/- 5\\nx = 9 or x = -1',
                 options: [
                   {
                     id: 'missing-negative',

@@ -50,6 +50,14 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
     setGraphStates(initialGraphStates);
   }, [initialGraphStates]);
 
+  const previousLessonId = useMemo(() => {
+    const index = lessonOrder.indexOf(lesson.id);
+    if (index === -1 || index === 0) {
+      return null;
+    }
+    return lessonOrder[index - 1];
+  }, [lesson.id]);
+
   const nextLessonId = useMemo(() => {
     const index = lessonOrder.indexOf(lesson.id);
     if (index === -1 || index === lessonOrder.length - 1) {
@@ -58,6 +66,7 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
     return lessonOrder[index + 1];
   }, [lesson.id]);
 
+  const previousLesson = previousLessonId ? lessons[previousLessonId] : undefined;
   const nextLesson = nextLessonId ? lessons[nextLessonId] : undefined;
 
   return (
@@ -341,6 +350,17 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
           )}
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              {previousLesson && (
+                <Link
+                  href={`/lesson/${previousLesson.id}`}
+                  className="inline-flex items-center justify-center rounded-xl border-2 border-indigo-300 bg-white px-6 py-3 text-sm font-semibold text-indigo-700 shadow-md transition hover:-translate-y-0.5 hover:border-indigo-400 hover:shadow-lg"
+                >
+                  ← Previous Lesson
+                </Link>
+              )}
+            </div>
+
             {nextLesson ? (
               <>
                 <div>

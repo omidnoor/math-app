@@ -12,6 +12,7 @@ interface ErrorOption {
 interface ErrorCase {
   id?: string;
   work: string;
+  fix?: string;
   options: ErrorOption[];
 }
 
@@ -25,6 +26,7 @@ interface NormalizedErrorOption {
 interface NormalizedErrorCase {
   id: string;
   work: string;
+  fix?: string;
   options: NormalizedErrorOption[];
 }
 
@@ -38,6 +40,7 @@ export function ErrorClinic({ cases }: ErrorClinicProps) {
       cases.map((item, index) => ({
         id: item.id ?? `case-${index}`,
         work: item.work,
+        fix: item.fix,
         options: item.options.map((option, optionIndex) => ({
           id: option.id ?? `option-${optionIndex}`,
           label: option.label,
@@ -125,6 +128,13 @@ export function ErrorClinic({ cases }: ErrorClinicProps) {
                   </div>
                 </div>
               )}
+
+              {hasSelection && isCorrect && item.fix && (
+                <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+                  <p className="text-sm font-semibold text-emerald-800">One correct revision</p>
+                  <pre className="mt-2 whitespace-pre-wrap rounded bg-white px-3 py-2 font-mono text-sm text-emerald-900 shadow-inner">{item.fix}</pre>
+                </div>
+              )}
             </div>
           );
         })}
@@ -134,5 +144,5 @@ export function ErrorClinic({ cases }: ErrorClinicProps) {
 }
 
 function optionFeedback(isCorrect: boolean) {
-  return isCorrect ? 'You spotted the issue.' : 'Check again—compare each step carefully.';
+  return isCorrect ? 'You spotted the issue.' : 'Check again - compare each step carefully.';
 }
