@@ -215,10 +215,11 @@ export const translations: TranslationData = {
     'prompt.vertexRead': 'State the vertex of the rewritten function.',
     'prompt.featureExplain': 'Explain which feature becomes easier to read and why.',
     'prompt.completeSquare.sample':
-      'Isolate x² - 5x, add (5/2)² to both sides, and rewrite the left side as (x - 5/2)².',
-    'prompt.vertexRead.sample': 'Once you have a(x - h)² + k, read the vertex directly as (h, k).',
+      'Isolate x^2 - 5x, add (5/2)^2 to both sides, and rewrite the left side as (x - 5/2)^2.',
+    'prompt.vertexRead.sample':
+      'Once the expression is a(x - h)^2 + k, read the vertex directly as (h, k).',
     'prompt.featureExplain.sample':
-      'Use the new form to highlight the feature you care about—for example, the vertex tells you the maximum height.',
+      'Use the new form to highlight the feature you care about, for example the vertex shows the maximum height.',
     'prompt.discPositive': 'Describe the graph when the discriminant is positive.',
     'prompt.discZero': 'Describe the graph when the discriminant equals zero.',
     'prompt.discNegative': 'Explain why a negative discriminant means no real roots.',

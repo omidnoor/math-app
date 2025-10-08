@@ -46,7 +46,15 @@ export interface HingeItem {
 }
 
 export interface InteractiveSpec {
-  type: 'decisionTree' | 'stepRevealer' | 'intervalTester' | 'graphAlgebraSync';
+  type:
+    | 'decisionTree'
+    | 'stepRevealer'
+    | 'intervalTester'
+    | 'graphAlgebraSync'
+    | 'graphPromptResponder'
+    | 'formMatch'
+    | 'methodPractice'
+    | 'errorClinic';
   config: Record<string, unknown>;
 }
 

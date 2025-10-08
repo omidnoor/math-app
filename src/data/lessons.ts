@@ -88,9 +88,28 @@ export const lessons: Record<LessonId, Lesson> = {
         titleKey: 'l2.step2.title',
         bodyKey: 'l2.step2.body',
         interactive: {
-          type: 'graphAlgebraSync',
+          type: 'graphPromptResponder',
           config: {
-            prompts: ['prompt.completeSquare', 'prompt.vertexRead', 'prompt.featureExplain'],
+            prompts: [
+              {
+                id: 'complete-square',
+                prompt:
+                  'Complete the square for the current equation and write the vertex form you see on the graph.',
+                sampleKey: 'prompt.completeSquare.sample',
+              },
+              {
+                id: 'read-vertex',
+                prompt:
+                  'Identify the vertex coordinates once your expression is in vertex form.',
+                sampleKey: 'prompt.vertexRead.sample',
+              },
+              {
+                id: 'feature-highlight',
+                prompt:
+                  'Explain which feature the vertex form highlights for this situation and why that matters.',
+                sampleKey: 'prompt.featureExplain.sample',
+              },
+            ],
           },
         },
       },
@@ -99,12 +118,33 @@ export const lessons: Record<LessonId, Lesson> = {
         titleKey: 'l2.step3.title',
         bodyKey: 'l2.step3.body',
         interactive: {
-          type: 'stepRevealer',
+          type: 'formMatch',
           config: {
-            steps: [
-              'sequence.yIntercept',
-              'sequence.axisConnect',
-              'sequence.factoredFeatures',
+            scenarios: [
+              {
+                id: 'vertex-context',
+                prompt:
+                  'Physics lab: You need the maximum height of a projectile and when it occurs.',
+                correct: 'vertex',
+                rationale:
+                  'Vertex form shows the peak (h, k) immediately so the height and time are visible at a glance.',
+              },
+              {
+                id: 'revenue-break-even',
+                prompt:
+                  'Business case: Management wants to know at which ticket counts profit hits zero.',
+                correct: 'intercept',
+                rationale:
+                  'Intercept form exposes the zeros directly, matching the break-even requirement.',
+              },
+              {
+                id: 'coefficient-compare',
+                prompt:
+                  'Model comparison: Two quadratics are written in ax^2 + bx + c and you must combine them.',
+                correct: 'standard',
+                rationale:
+                  'Standard form keeps coefficients visible for combining like terms or plugging into formulas.',
+              },
             ],
           },
         },
@@ -156,12 +196,32 @@ export const lessons: Record<LessonId, Lesson> = {
         titleKey: 'l3.step2.title',
         bodyKey: 'l3.step2.body',
         interactive: {
-          type: 'stepRevealer',
+          type: 'methodPractice',
           config: {
-            steps: [
-              'sequence.squareRoot',
-              'sequence.factoring',
-              'sequence.checkWork',
+            problems: [
+              {
+                id: 'isolated-square',
+                prompt: 'Solve 3(x - 2)^2 = 27 efficiently.',
+                answer: 'squareRoot',
+                explanation:
+                  'The squared expression is already isolated, so taking square roots is the quickest path.',
+                steps: [
+                  'Divide both sides by 3 to get (x - 2)^2 = 9.',
+                  'Take square roots: x - 2 = +/- 3.',
+                  'Add 2 to both branches: x = 5 or x = -1.',
+                ],
+              },
+              {
+                id: 'factorable',
+                prompt: 'Solve x^2 - 6x = 0.',
+                answer: 'factoring',
+                explanation:
+                  'Every term contains x, so factoring exposes the zero product rule immediately.',
+                steps: [
+                  'Factor: x(x - 6) = 0.',
+                  'Set each factor equal to zero to find x = 0 or x = 6.',
+                ],
+              },
             ],
           },
         },
@@ -171,12 +231,36 @@ export const lessons: Record<LessonId, Lesson> = {
         titleKey: 'l3.step3.title',
         bodyKey: 'l3.step3.body',
         interactive: {
-          type: 'stepRevealer',
+          type: 'errorClinic',
           config: {
-            steps: [
-              'sequence.diagnose',
-              'sequence.fix',
-              'sequence.reflect',
+            cases: [
+              {
+                id: 'square-root-branch',
+                work: '(x - 4)^2 = 25\nx - 4 = 5\nx = 9',
+                options: [
+                  {
+                    id: 'missing-negative',
+                    label: 'They forgot the negative square-root branch.',
+                    correct: true,
+                    explanation:
+                      'Taking square roots requires +/-. The second branch gives x - 4 = -5, so x = -1 is missing.',
+                  },
+                  {
+                    id: 'bad-distribution',
+                    label: 'They mis-distributed when expanding.',
+                    correct: false,
+                    explanation:
+                      'No distribution happened in these steps, so that error does not apply.',
+                  },
+                  {
+                    id: 'missing-division',
+                    label: 'They should have divided both sides before taking roots.',
+                    correct: false,
+                    explanation:
+                      'The squared expression is already isolated, so no additional division is required.',
+                  },
+                ],
+              },
             ],
           },
         },

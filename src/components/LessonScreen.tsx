@@ -12,6 +12,10 @@ import { StepRevealer } from './StepRevealer';
 import { DecisionTree } from './DecisionTree';
 import { IntervalTester } from './IntervalTester';
 import { GraphPlaceholder } from './GraphPlaceholder';
+import { GraphPromptResponder } from './GraphPromptResponder';
+import { FormMatchActivity } from './FormMatchActivity';
+import { MethodPractice } from './MethodPractice';
+import { ErrorClinic } from './ErrorClinic';
 
 interface LessonScreenProps {
   lesson: Lesson;
@@ -193,6 +197,78 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
                         </li>
                       ))}
                   </ul>
+                </div>
+              )}
+              {step.interactive?.type === 'graphPromptResponder' && (
+                <div className="mt-6">
+                  <GraphPromptResponder
+                    prompts={
+                      Array.isArray(step.interactive.config.prompts)
+                        ? (step.interactive.config.prompts as Array<{
+                            id?: string;
+                            prompt: string;
+                            sampleKey?: string;
+                          }>)
+                        : []
+                    }
+                  />
+                </div>
+              )}
+              {step.interactive?.type === 'formMatch' && (
+                <div className="mt-6">
+                  <FormMatchActivity
+                    scenarios={
+                      Array.isArray(step.interactive.config.scenarios)
+                        ? (step.interactive.config.scenarios as Array<{
+                            id?: string;
+                            prompt: string;
+                            correct: 'standard' | 'vertex' | 'intercept';
+                            rationale: string;
+                          }>)
+                        : []
+                    }
+                  />
+                </div>
+              )}
+              {step.interactive?.type === 'methodPractice' && (
+                <div className="mt-6">
+                  <MethodPractice
+                    problems={
+                      Array.isArray(step.interactive.config.problems)
+                        ? (step.interactive.config.problems as Array<{
+                            id?: string;
+                            prompt: string;
+                            answer:
+                              | 'squareRoot'
+                              | 'factoring'
+                              | 'completingSquare'
+                              | 'quadraticFormula';
+                            explanation: string;
+                            steps: string[];
+                          }>)
+                        : []
+                    }
+                  />
+                </div>
+              )}
+              {step.interactive?.type === 'errorClinic' && (
+                <div className="mt-6">
+                  <ErrorClinic
+                    cases={
+                      Array.isArray(step.interactive.config.cases)
+                        ? (step.interactive.config.cases as Array<{
+                            id?: string;
+                            work: string;
+                            options: Array<{
+                              id?: string;
+                              label: string;
+                              correct: boolean;
+                              explanation: string;
+                            }>;
+                          }>)
+                        : []
+                    }
+                  />
                 </div>
               )}
               {step.interactive?.type === 'stepRevealer' && (
