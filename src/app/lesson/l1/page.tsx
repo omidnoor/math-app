@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { L1Content } from '@/lib/content/l1-content';
+import ExplorePhase from './ExplorePhase';
 
 type Phase = 'engage' | 'explore' | 'explain' | 'elaborate' | 'evaluate';
 
