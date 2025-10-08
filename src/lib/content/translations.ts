@@ -214,6 +214,11 @@ export const translations: TranslationData = {
     'prompt.completeSquare': 'Complete the square step by step.',
     'prompt.vertexRead': 'State the vertex of the rewritten function.',
     'prompt.featureExplain': 'Explain which feature becomes easier to read and why.',
+    'prompt.completeSquare.sample':
+      'Isolate x² - 5x, add (5/2)² to both sides, and rewrite the left side as (x - 5/2)².',
+    'prompt.vertexRead.sample': 'Once you have a(x - h)² + k, read the vertex directly as (h, k).',
+    'prompt.featureExplain.sample':
+      'Use the new form to highlight the feature you care about—for example, the vertex tells you the maximum height.',
     'prompt.discPositive': 'Describe the graph when the discriminant is positive.',
     'prompt.discZero': 'Describe the graph when the discriminant equals zero.',
     'prompt.discNegative': 'Explain why a negative discriminant means no real roots.',
@@ -236,6 +241,7 @@ export const translations: TranslationData = {
     'prompt.assessFit': 'Assess how well the model fits and note any limitations.',
 
     'lesson.graphSync.helper': 'Summarize the features you observe in the graph above.',
+    'lesson.graphSync.placeholder': 'Type your observations here...',
     'lesson.revealer.showNext': 'Reveal next step',
     'lesson.revealer.restart': 'Start over',
     'lesson.decisionTree.helper': 'Consider each branch and decide which path matches your equation.',
@@ -282,6 +288,66 @@ export const translations: TranslationData = {
     'placeholder.graph.revenue': 'Revenue graph preview. Discuss how price impacts revenue before the interactive arrives.',
     'placeholder.graph.inequality': 'Inequality number-line preview. Use reasoning to mark solution intervals.',
     'placeholder.graph.fencing': 'Fencing model preview. Sketch rectangles and reason with the prompts while the interactive loads.',
+
+    'form.standard': 'Standard form (ax^2 + bx + c)',
+    'form.vertex': 'Vertex form a(x - h)^2 + k',
+    'form.intercept': 'Intercept form a(x - r₁)(x - r₂)',
+
+    'lesson.formMatch.instructions':
+      'Which form makes the required feature easiest to see? Select an option for each scenario.',
+    'lesson.formMatch.feedback.correct': 'Nice pick—this form highlights the requested feature.',
+    'lesson.formMatch.feedback.incorrect': 'That form hides the feature. Try again or convert first.',
+    'lesson.formMatch.review': 'Review why this form fits:',
+    'l2.formMatch.projectile.scenario':
+      'Physics lab launch: You need the maximum height of a ball and when it happens.',
+    'l2.formMatch.projectile.rationale':
+      'Vertex form shows the vertex (h, k) immediately, so you get the peak height and time in one glance.',
+    'l2.formMatch.revenue.scenario':
+      'Business model: You must report when profit hits zero for two different ticket prices.',
+    'l2.formMatch.revenue.rationale':
+      'Intercept form reveals the zeros directly so you can read the break-even quantities.',
+    'l2.formMatch.model.scenario':
+      'Model comparison: You already have ax^2 + bx + c from data and need to combine or compare coefficients.',
+    'l2.formMatch.model.rationale':
+      'Standard form keeps coefficients explicit for combining like terms or plugging into other formulas.',
+
+    'method.squareRoot': 'Square-root method',
+    'method.factoring': 'Factoring',
+    'method.completingSquare': 'Completing the square',
+    'method.quadraticFormula': 'Quadratic formula',
+    'lesson.methodPractice.prompt': 'Which method would you choose?',
+    'lesson.methodPractice.check': 'Check method',
+    'lesson.methodPractice.reveal': 'Show solution steps',
+    'lesson.methodPractice.hide': 'Hide solution steps',
+    'lesson.methodPractice.correct': 'Right choice! This method matches the structure.',
+    'lesson.methodPractice.incorrect': 'That adds extra work. Look at the structure and try a different tool.',
+    'l3.practice.problem1.prompt': 'Solve 3(x - 2)^2 = 27.',
+    'l3.practice.problem1.reason':
+      'The squared chunk is already isolated, so the square-root method unwraps it quickly.',
+    'l3.practice.problem1.step1': 'Divide both sides by 3: (x - 2)^2 = 9.',
+    'l3.practice.problem1.step2': 'Take the square root: x - 2 = ±3.',
+    'l3.practice.problem1.step3': 'Add 2: x = 5 or x = -1.',
+    'l3.practice.problem2.prompt': 'Solve x^2 - 6x = 0.',
+    'l3.practice.problem2.reason':
+      'Every term shares a factor of x, so factoring exposes the zero product rule immediately.',
+    'l3.practice.problem2.step1': 'Factor: x(x - 6) = 0.',
+    'l3.practice.problem2.step2': 'Set factors equal to zero: x = 0 or x = 6.',
+
+    'lesson.errorClinic.prompt': 'What went wrong in the student work?',
+    'lesson.errorClinic.check': 'Check my thinking',
+    'lesson.errorClinic.correct': 'You spotted the issue.',
+    'lesson.errorClinic.incorrect': 'Not quite—look again at each step.',
+    'l3.error.case1.work':
+      '(x - 4)^2 = 25\nx - 4 = 5\nx = 9',
+    'l3.error.case1.option1': 'They dropped the negative square root.',
+    'l3.error.case1.option2': 'They distributed incorrectly.',
+    'l3.error.case1.option3': 'They forgot to divide both sides by 2.',
+    'l3.error.case1.rationale.correct':
+      'Taking square roots must include ±. The second branch gives x - 4 = -5, so there is a second solution.',
+    'l3.error.case1.rationale.option2':
+      'No distribution happened in this step, so that is not the issue here.',
+    'l3.error.case1.rationale.option3':
+      'There is no coefficient in front of the squared expression, so no division is needed.',
 
     'lesson.summary.title': 'Lesson wrap-up',
     'lesson.summary.reflectionPrompt': 'Which strategy helped you most today, and why?',
@@ -521,6 +587,9 @@ export const translations: TranslationData = {
     'prompt.completeSquare': '按照步骤完成配方法。',
     'prompt.vertexRead': '写出化简后函数的顶点。',
     'prompt.featureExplain': '说明哪一个特征最容易读取以及原因。',
+    'prompt.completeSquare.sample': '把 x² - 5x 独立出来，补上 (5/2)² 并写成 (x - 5/2)²。',
+    'prompt.vertexRead.sample': '当式子写成 a(x - h)² + k 时，顶点就是 (h, k)。',
+    'prompt.featureExplain.sample': '利用新的型式凸显重点，例如顶点直接告诉你最高点。',
     'prompt.discPositive': '描述判别式为正时图形的样子。',
     'prompt.discZero': '描述判别式为零时图形的样子。',
     'prompt.discNegative': '解释判别式为负为何没有实根。',
@@ -543,6 +612,7 @@ export const translations: TranslationData = {
     'prompt.assessFit': '评价模型的拟合程度及限制。',
 
     'lesson.graphSync.helper': '总结你在上方图形看到的特征。',
+    'lesson.graphSync.placeholder': '在这里记录你的观察……',
     'lesson.revealer.showNext': '显示下一步',
     'lesson.revealer.restart': '重新开始',
     'lesson.decisionTree.helper': '阅读每个分支，判断哪条路径最符合方程结构。',

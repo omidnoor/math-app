@@ -281,7 +281,7 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
                   href={`/lesson/${nextLesson.id}`}
                   className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-2xl"
                 >
-                  <TranslatableText tKey="lesson.summary.cta.next" />
+                  Next Lesson →
                 </Link>
               </>
             ) : (
@@ -295,7 +295,7 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
                   href="/"
                   className="inline-flex items-center justify-center rounded-xl border-2 border-emerald-300 bg-white px-6 py-3 text-sm font-semibold text-emerald-700 shadow-md transition hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-lg"
                 >
-                  <TranslatableText tKey="lesson.summary.cta.home" />
+                  Back to Home
                 </Link>
               </>
             )}

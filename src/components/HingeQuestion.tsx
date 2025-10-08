@@ -57,7 +57,7 @@ export function HingeQuestion({ item }: HingeQuestionProps) {
                     isCorrect ? 'text-emerald-600' : 'text-rose-600'
                   }`}
                 >
-                  {isCorrect ? 'Correct' : 'Try again'}
+                  {isCorrect ? '✓ Correct' : '✗ Try again'}
                 </span>
               )}
             </button>

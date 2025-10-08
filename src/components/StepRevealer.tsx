@@ -44,7 +44,7 @@ export function StepRevealer({ steps }: StepRevealerProps) {
             onClick={showMore}
             className="inline-flex items-center justify-center rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-purple-700"
           >
-            <TranslatableText tKey="lesson.revealer.showNext" />
+            Show Next Step →
           </button>
         ) : (
           <button
@@ -52,7 +52,7 @@ export function StepRevealer({ steps }: StepRevealerProps) {
             onClick={reset}
             className="inline-flex items-center justify-center rounded-lg border border-purple-300 bg-white px-4 py-2 text-sm font-semibold text-purple-700 shadow-sm transition hover:bg-purple-100"
           >
-            <TranslatableText tKey="lesson.revealer.restart" />
+            ↺ Restart
           </button>
         )}
       </div>
