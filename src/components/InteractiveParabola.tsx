@@ -25,6 +25,20 @@ const DOMAIN_MAX = 8;
 const DOMAIN_SIZE = DOMAIN_MAX - DOMAIN_MIN;
 const PARAM_BOUNDS = { min: -7, max: 7 };
 
+import { MathInline } from './Math';
+
+function latexEquation(a:number,h:number,k:number){
+  const coeff = a === 1 ? '' : a === -1 ? '-' : a.toFixed(1);
+  const hSign = h >= 0 ? '-' : '+';
+  const hAbs = Math.abs(h).toFixed(1);
+  const kSign = k >= 0 ? '+' : '-';
+  const kAbs = Math.abs(k).toFixed(1);
+    return 'y = ' + coeff + '(x ' + hSign + ' ' + hAbs + ')^{2} ' + kSign + ' ' + kAbs;
+}
+
+function EquationDisplay({a,h,k}:{a:number;h:number;k:number}){
+  return (<p className="mt-2 font-mono text-xl font-semibold text-slate-900"><MathInline latex={latexEquation(a,h,k)} /></p>);
+}
 export default function InteractiveParabola({
   initialA = 1,
   initialH = 0,
@@ -312,15 +326,15 @@ export default function InteractiveParabola({
       {showEquation && (
         <div className="w-full max-w-2xl rounded-xl border border-indigo-100 bg-indigo-50 px-5 py-4 text-center shadow-sm">
           <p className="text-sm font-medium text-indigo-700">Current Equation</p>
-          <p className="mt-2 font-mono text-xl font-semibold text-slate-900">
-            y = {formatCoefficient(a)}(x {formatSigned(-h)})² {formatSigned(k)}
-          </p>
+          <p className="text-sm font-medium text-indigo-700">Current Equation</p>
+          <EquationDisplay a={a} h={h} k={k} />
           <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
             <InfoCard label="a" value={a} helper={a > 0 ? 'Opens up' : 'Opens down'} />
             <InfoCard label="h" value={h} helper="Horizontal shift" />
             <InfoCard label="k" value={k} helper="Vertical shift" />
           </div>
         </div>
+
       )}
     </div>
   );
@@ -348,18 +362,6 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-function formatSigned(value: number): string {
-  if (value === 0) return '+ 0';
-  const sign = value >= 0 ? '+ ' : '- ';
-  return `${sign}${Math.abs(value).toFixed(1)}`;
-}
-
-function formatCoefficient(value: number): string {
-  if (value === 1) return '';
-  if (value === -1) return '-';
-  return value.toFixed(1);
-}
-
 function InfoCard({
   label,
   value,
@@ -378,3 +380,5 @@ function InfoCard({
     </div>
   );
 }
+
+

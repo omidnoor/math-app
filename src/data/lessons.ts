@@ -1,4 +1,4 @@
-import type { Lesson, LessonId } from '@/types';
+﻿import type { Lesson, LessonId } from '@/types';
 
 export const lessons: Record<LessonId, Lesson> = {
   l1: {
@@ -293,6 +293,26 @@ export const lessons: Record<LessonId, Lesson> = {
     introKey: 'l4.intro',
     goals: ['l4.goal1', 'l4.goal2', 'l4.goal3'],
     steps: [
+      {
+        id: 'example-completing-square-a-not-1',
+        titleKey: 'l4.step1.title',
+        bodyKey: 'l4.step1.body',
+        interactive: {
+          type: 'workedExample',
+          config: {
+            title: 'Solve by Completing the Square (a ≠ 1)',
+            steps: [
+              { math: "-2x^2 - 3x + 7 = 0" },
+              { math: "x^2 + \\tfrac{3}{2}x - \\tfrac{7}{2} = 0" },
+              { math: "x^2 + \\tfrac{3}{2}x = \\tfrac{7}{2}" },
+              { math: "x^2 + \\tfrac{3}{2}x + (\\tfrac{3}{4})^2 = \\tfrac{7}{2} + (\\tfrac{3}{4})^2" },
+              { math: "(x + \\tfrac{3}{4})^2 = \\tfrac{65}{16}" },
+              { math: "x + \\tfrac{3}{4} = \\pm \\sqrt{\\tfrac{65}{16}}" },
+              { math: "x = -\\tfrac{3}{4} \\pm \\tfrac{\\sqrt{65}}{4}" }
+            ]
+          }
+        }
+      },
       {
         id: 'derive-formula',
         titleKey: 'l4.step1.title',
@@ -709,3 +729,4 @@ export const lessonOrder: LessonId[] = [
 export function getLessonById(id: LessonId): Lesson | undefined {
   return lessons[id];
 }
+

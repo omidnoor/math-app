@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 :root {
   --background: #ffffff;
@@ -59,3 +59,5 @@ html {
 .katex-display {
   margin: 1.5rem 0;
 }
+
+@import "katex/dist/katex.min.css";

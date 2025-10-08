@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
@@ -6,7 +6,7 @@ import type { GraphSpec, Lesson } from '@/types';
 import { TranslatableText } from './TranslatableText';
 import InteractiveParabola from './InteractiveParabola';
 import { HingeQuestion } from './HingeQuestion';
-import { safeTranslate } from '@/lib/content/i18n';
+import { safeTranslate, loadLessonTranslations } from '@/lib/content/i18n';
 import { lessonOrder, lessons } from '@/data/lessons';
 import { StepRevealer } from './StepRevealer';
 import { DecisionTree } from './DecisionTree';
@@ -33,6 +33,7 @@ function getInitialGraphState(graph?: GraphSpec): GraphState | undefined {
 }
 
 export function LessonScreen({ lesson }: LessonScreenProps) {
+  useEffect(() => { loadLessonTranslations(lesson.id); }, [lesson.id]);
   const initialGraphStates = useMemo(() => {
     const states: Record<string, GraphState> = {};
     lesson.steps.forEach((step) => {
@@ -198,7 +199,7 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
                       (step.interactive.config.prompts as string[]).map((promptKey) => (
                         <li key={promptKey} className="flex items-center gap-2">
                           <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-amber-200 text-xs font-semibold text-amber-900">
-                            ✔
+                            âœ”
                           </span>
                           <span className="font-medium text-amber-900">
                             {safeTranslate(promptKey)}
@@ -356,7 +357,7 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
                   href={`/lesson/${previousLesson.id}`}
                   className="inline-flex items-center justify-center rounded-xl border-2 border-indigo-300 bg-white px-6 py-3 text-sm font-semibold text-indigo-700 shadow-md transition hover:-translate-y-0.5 hover:border-indigo-400 hover:shadow-lg"
                 >
-                  ← Previous Lesson
+                  â† Previous Lesson
                 </Link>
               )}
             </div>
@@ -377,7 +378,7 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
                   href={`/lesson/${nextLesson.id}`}
                   className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-2xl"
                 >
-                  Next Lesson →
+                  Next Lesson â†’
                 </Link>
               </>
             ) : (
@@ -401,3 +402,4 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
     </div>
   );
 }
+
