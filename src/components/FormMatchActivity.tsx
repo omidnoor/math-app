@@ -5,6 +5,13 @@ import { useEffect, useMemo, useState } from 'react';
 type FormOption = 'standard' | 'vertex' | 'intercept';
 
 interface ScenarioConfig {
+  id?: string;
+  prompt: string;
+  correct: FormOption;
+  rationale: string;
+}
+
+interface NormalizedScenarioConfig {
   id: string;
   prompt: string;
   correct: FormOption;
@@ -21,8 +28,23 @@ const FORM_LABELS: Record<FormOption, string> = {
   intercept: 'Intercept form a(x - r1)(x - r2)',
 };
 
+const FORM_TIPS: Array<{ option: FormOption; helper: string }> = [
+  {
+    option: 'standard',
+    helper: 'Coefficients stay visible, so combining equations or finding the y-intercept is straightforward.',
+  },
+  {
+    option: 'vertex',
+    helper: 'The vertex (h, k) is explicit, revealing the maximum or minimum value and where it occurs.',
+  },
+  {
+    option: 'intercept',
+    helper: 'Zeros are factored, so x-intercepts and break-even points pop out immediately.',
+  },
+];
+
 export function FormMatchActivity({ scenarios }: FormMatchActivityProps) {
-  const normalizedScenarios = useMemo<ScenarioConfig[]>(
+  const normalizedScenarios = useMemo<NormalizedScenarioConfig[]>(
     () =>
       scenarios.map((scenario, index) => ({
         id: scenario.id ?? `scenario-${index}`,
@@ -60,6 +82,17 @@ export function FormMatchActivity({ scenarios }: FormMatchActivityProps) {
       <p className="mt-1 text-sm text-indigo-700">
         Pick the form that makes the requested feature easiest to read.
       </p>
+
+      <div className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-sm text-indigo-800">
+        <p className="font-semibold text-indigo-900">Remember what each form highlights:</p>
+        <ul className="mt-2 space-y-1">
+          {FORM_TIPS.map((tip) => (
+            <li key={`tip-${tip.option}`}>
+              <span className="font-semibold">{FORM_LABELS[tip.option]}:</span> {tip.helper}
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <div className="mt-6 space-y-6">
         {normalizedScenarios.map((scenario) => {

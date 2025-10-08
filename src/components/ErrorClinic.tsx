@@ -3,16 +3,29 @@
 import { useEffect, useMemo, useState } from 'react';
 
 interface ErrorOption {
-  id: string;
+  id?: string;
   label: string;
   correct: boolean;
   explanation: string;
 }
 
 interface ErrorCase {
-  id: string;
+  id?: string;
   work: string;
   options: ErrorOption[];
+}
+
+interface NormalizedErrorOption {
+  id: string;
+  label: string;
+  correct: boolean;
+  explanation: string;
+}
+
+interface NormalizedErrorCase {
+  id: string;
+  work: string;
+  options: NormalizedErrorOption[];
 }
 
 interface ErrorClinicProps {
@@ -20,7 +33,7 @@ interface ErrorClinicProps {
 }
 
 export function ErrorClinic({ cases }: ErrorClinicProps) {
-  const normalizedCases = useMemo<ErrorCase[]>(
+  const normalizedCases = useMemo<NormalizedErrorCase[]>(
     () =>
       cases.map((item, index) => ({
         id: item.id ?? `case-${index}`,

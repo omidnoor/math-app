@@ -9,6 +9,14 @@ type MethodChoice =
   | 'quadraticFormula';
 
 interface MethodProblem {
+  id?: string;
+  prompt: string;
+  answer: MethodChoice;
+  explanation: string;
+  steps: string[];
+}
+
+interface NormalizedMethodProblem {
   id: string;
   prompt: string;
   answer: MethodChoice;
@@ -28,7 +36,7 @@ const METHOD_LABELS: Record<MethodChoice, string> = {
 };
 
 export function MethodPractice({ problems }: MethodPracticeProps) {
-  const normalizedProblems = useMemo<MethodProblem[]>(
+  const normalizedProblems = useMemo<NormalizedMethodProblem[]>(
     () =>
       problems.map((problem, index) => ({
         id: problem.id ?? `problem-${index}`,

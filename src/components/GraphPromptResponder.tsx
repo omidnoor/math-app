@@ -4,6 +4,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { safeTranslate } from '@/lib/content/i18n';
 
 interface PromptConfig {
+  id?: string;
+  prompt: string;
+  sampleKey?: string;
+}
+
+interface NormalizedPromptConfig {
   id: string;
   prompt: string;
   sampleKey?: string;
@@ -14,7 +20,7 @@ interface GraphPromptResponderProps {
 }
 
 export function GraphPromptResponder({ prompts }: GraphPromptResponderProps) {
-  const normalizedPrompts = useMemo<PromptConfig[]>(
+  const normalizedPrompts = useMemo<NormalizedPromptConfig[]>(
     () =>
       prompts.map((prompt, index) => ({
         id: prompt.id ?? `prompt-${index}`,
@@ -44,6 +50,14 @@ export function GraphPromptResponder({ prompts }: GraphPromptResponderProps) {
       <p className="mt-1 text-sm text-amber-700">
         Use the graph above to respond. You can clear your notes at any time.
       </p>
+      <div className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <p className="font-semibold">What to include</p>
+        <ul className="mt-2 list-disc space-y-1 pl-5">
+          <li>Name the feature you see (vertex, axis, opening, range).</li>
+          <li>Quote coordinates or equations (e.g., vertex (h, k), axis x = h).</li>
+          <li>Explain how you know (sign of a, position of the vertex, symmetry).</li>
+        </ul>
+      </div>
       <div className="mt-5 space-y-5">
         {normalizedPrompts.map((prompt, index) => (
           <div key={prompt.id} className="space-y-2">
@@ -80,3 +94,4 @@ export function GraphPromptResponder({ prompts }: GraphPromptResponderProps) {
     </div>
   );
 }
+

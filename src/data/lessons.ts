@@ -124,10 +124,10 @@ export const lessons: Record<LessonId, Lesson> = {
               {
                 id: 'vertex-context',
                 prompt:
-                  'Physics lab: You need the maximum height of a projectile and when it occurs.',
+                  'Physics lab: Projectile path: The graph shows height y as a function of x. Report the maximum height and the x-value where it occurs.',
                 correct: 'vertex',
                 rationale:
-                  'Vertex form shows the peak (h, k) immediately so the height and time are visible at a glance.',
+                  'Vertex form exposes the vertex (h, k). Here h is the x-value at the peak, and k is the maximum height.',
               },
               {
                 id: 'revenue-break-even',

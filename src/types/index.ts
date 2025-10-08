@@ -24,7 +24,7 @@ export interface Step {
 
 export interface GraphSpec {
   type: GraphType;
-  params: Record<string, number | string>;
+  params: Record<string, number | string | boolean>;
   draggable?: boolean;
   sliders?: SliderSpec[];
   lockedParams?: Array<'a' | 'h' | 'k'>;
