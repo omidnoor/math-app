@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { L1Content } from '@/lib/content/l1-content';
 import ExplorePhase from './ExplorePhase';
+import ExplainPhase from './ExplainPhase';
 
 type Phase = 'engage' | 'explore' | 'explain' | 'elaborate' | 'evaluate';
 
@@ -276,44 +277,4 @@ function EngagePhase({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-// ========== EXPLORE PHASE (Placeholder) ==========
-function ExplorePhase({ onComplete }: { onComplete: () => void }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="text-center py-20"
-    >
-      <h2 className="text-4xl font-bold mb-4">🔍 EXPLORE Phase</h2>
-      <p className="text-gray-600 mb-8">Interactive graph activities coming next...</p>
-      <button
-        onClick={onComplete}
-        className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold"
-      >
-        Continue to Explain
-      </button>
-    </motion.div>
-  );
-}
-
-// ========== EXPLAIN PHASE (Placeholder) ==========
-function ExplainPhase({ onComplete }: { onComplete: () => void }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="text-center py-20"
-    >
-      <h2 className="text-4xl font-bold mb-4">💡 EXPLAIN Phase</h2>
-      <p className="text-gray-600 mb-8">Worked examples and formulas coming next...</p>
-      <button
-        onClick={onComplete}
-        className="px-8 py-4 bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-xl font-semibold"
-      >
-        Continue to Practice
-      </button>
-    </motion.div>
-  );
-}
+// ExplainPhase is now imported from separate file
