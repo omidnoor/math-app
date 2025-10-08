@@ -27,10 +27,11 @@ export interface GraphSpec {
   params: Record<string, number | string>;
   draggable?: boolean;
   sliders?: SliderSpec[];
+  lockedParams?: Array<'a' | 'h' | 'k'>;
 }
 
 export interface SliderSpec {
-  param: string;
+  param: 'a' | 'h' | 'k';
   min: number;
   max: number;
   step: number;
@@ -46,7 +47,7 @@ export interface HingeItem {
 
 export interface InteractiveSpec {
   type: 'decisionTree' | 'stepRevealer' | 'intervalTester' | 'graphAlgebraSync';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
 }
 
 export interface TranslationData {

@@ -2,208 +2,308 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { lessonOrder, lessons } from '@/data/lessons';
+import { TranslatableText } from '@/components/TranslatableText';
+import { safeTranslate } from '@/lib/content/i18n';
+
+const availableLessons = new Set<string>(['l1']);
+
+const lessonMeta = new Map<
+  string,
+  { duration: string; focus: string; gradient: string }
+>([
+  [
+    'l1',
+    {
+      duration: '35–45 min',
+      focus: 'Drag the vertex, identify the axis of symmetry, reason about range.',
+      gradient: 'from-indigo-500 to-purple-500',
+    },
+  ],
+  [
+    'l2',
+    {
+      duration: '40–50 min',
+      focus: 'Switch between standard, vertex, and intercept forms.',
+      gradient: 'from-purple-500 to-pink-500',
+    },
+  ],
+  [
+    'l3',
+    {
+      duration: '45–55 min',
+      focus: 'Choose the solving tool that matches the structure.',
+      gradient: 'from-pink-500 to-rose-500',
+    },
+  ],
+  [
+    'l4',
+    {
+      duration: '45–55 min',
+      focus: 'Use completing the square to justify the quadratic formula.',
+      gradient: 'from-rose-500 to-orange-500',
+    },
+  ],
+  [
+    'l5',
+    {
+      duration: '30–40 min',
+      focus: 'Interpret discriminants and connect to graphs.',
+      gradient: 'from-orange-500 to-amber-500',
+    },
+  ],
+  [
+    'l6',
+    {
+      duration: '45–55 min',
+      focus: 'Model projectile motion with units and constraints.',
+      gradient: 'from-amber-500 to-lime-500',
+    },
+  ],
+  [
+    'l7',
+    {
+      duration: '45–55 min',
+      focus: 'Optimize revenue and fencing scenarios with constraints.',
+      gradient: 'from-lime-500 to-emerald-500',
+    },
+  ],
+  [
+    'l8',
+    {
+      duration: '40–50 min',
+      focus: 'Solve quadratic inequalities and intersections via intervals.',
+      gradient: 'from-emerald-500 to-cyan-500',
+    },
+  ],
+  [
+    'l9',
+    {
+      duration: '60–75 min',
+      focus: 'Fit data with quadratics and complete the performance task.',
+      gradient: 'from-cyan-500 to-indigo-500',
+    },
+  ],
+]);
+
+const featureCards = [
+  {
+    title: 'Start with Real Life',
+    description:
+      'Launch a projectile, watch a basketball arc, and surface the math once intuition kicks in.',
+    icon: (
+      <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
+        />
+      </svg>
+    ),
+    gradient: 'from-indigo-500 to-purple-500',
+  },
+  {
+    title: 'Multiple Representations',
+    description:
+      'Toggle between algebra, graph, table, and verbal context so every feature connects.',
+    icon: (
+      <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 8c-1.657 0-3 .843-3 2s1.343 2 3 2 3-.843 3-2-1.343-2-3-2zm0 0V4m0 8v4m-4 4h8"
+        />
+      </svg>
+    ),
+    gradient: 'from-purple-500 to-pink-500',
+  },
+  {
+    title: 'Choose the Right Tool',
+    description:
+      'Use a decision tree to pick factoring, square root, completing the square, or the quadratic formula with purpose.',
+    icon: (
+      <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 14l9-5-9-5-9 5 9 5zm0 0v8"
+        />
+      </svg>
+    ),
+    gradient: 'from-pink-500 to-red-500',
+  },
+];
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        {/* Animated background shapes */}
+      <header className="relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-40 left-40 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+          <div className="absolute -top-40 -right-32 h-96 w-96 rounded-full bg-purple-300 opacity-40 blur-3xl"></div>
+          <div className="absolute -bottom-36 -left-24 h-96 w-96 rounded-full bg-pink-300 opacity-30 blur-3xl"></div>
+          <div className="absolute top-64 left-48 h-96 w-96 rounded-full bg-indigo-300 opacity-30 blur-3xl"></div>
         </div>
-
-        {/* Content */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+        <div className="relative mx-auto max-w-6xl px-6 pt-24 pb-32 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
+            transition={{ duration: 0.6 }}
+            className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-6xl font-bold text-transparent"
           >
-            <h1 className="text-6xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-              Master Quadratics
-            </h1>
-            <p className="text-2xl text-gray-700 mb-4 font-light">
-              Through Discovery, Not Memorization
-            </p>
-            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
-              Interactive lessons that teach you to <span className="font-semibold text-indigo-600">SEE patterns</span>,
-              {' '}<span className="font-semibold text-purple-600">BUILD models</span>, and
-              {' '}<span className="font-semibold text-pink-600">SOLVE real problems</span>
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/lesson/l1"
-                className="group relative px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
-              >
-                <span className="relative z-10">Start Learning Now</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </Link>
-
-              <Link
-                href="/teacher"
-                className="px-8 py-4 bg-white text-indigo-600 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-2 border-indigo-200"
-              >
-                Teacher Resources
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Features Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <h2 className="text-4xl font-bold text-center text-gray-900 mb-16">
-          How You'll Learn
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Feature 1 */}
+            Master Quadratics
+          </motion.h1>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow duration-300"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mt-4 text-2xl font-light text-slate-700"
           >
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mb-6">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Start with Real Life</h3>
-            <p className="text-gray-600 leading-relaxed">
-              Watch a basketball arc through the air. Launch a projectile. See the math in action FIRST,
-              then learn the formulas.
-            </p>
+            <TranslatableText tKey="app.tagline" />
           </motion.div>
-
-          {/* Feature 2 */}
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mx-auto mt-6 max-w-2xl text-lg text-slate-600"
+          >
+            Interactive lessons help you{' '}
+            <span className="font-semibold text-indigo-600">see structure</span>,{' '}
+            <span className="font-semibold text-purple-600">model situations</span>, and{' '}
+            <span className="font-semibold text-pink-600">reason with confidence</span>.
+          </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow duration-300"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Interactive Discovery</h3>
-            <p className="text-gray-600 leading-relaxed">
-              Drag vertices, adjust sliders, and DISCOVER patterns yourself.
-              You'll build deep understanding by exploring, not memorizing.
-            </p>
-          </motion.div>
-
-          {/* Feature 3 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow duration-300"
-          >
-            <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-red-500 rounded-2xl flex items-center justify-center mb-6">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Instant Guidance</h3>
-            <p className="text-gray-600 leading-relaxed">
-              Get immediate feedback on every question. Stuck? Click for hints.
-              Made a mistake? See exactly where and why, with clear explanations.
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Learning Path */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <h2 className="text-4xl font-bold text-center text-gray-900 mb-16">
-          Your Learning Journey
-        </h2>
-
-        <div className="space-y-8">
-          {[
-            {
-              num: '01',
-              title: 'Transformations & Features',
-              desc: 'Discover how a, h, and k move and shape parabolas',
-              time: '35-45 min',
-              color: 'from-indigo-500 to-purple-500',
-              available: true
-            },
-            {
-              num: '02',
-              title: 'Forms & Conversions',
-              desc: 'Master standard, vertex, and intercept forms',
-              time: '40-50 min',
-              color: 'from-purple-500 to-pink-500',
-              available: false
-            },
-            {
-              num: '03',
-              title: 'Solving Methods',
-              desc: 'Learn when to factor, complete square, or use the formula',
-              time: '45-55 min',
-              color: 'from-pink-500 to-red-500',
-              available: false
-            }
-          ].map((lesson, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className={`relative bg-white rounded-2xl p-8 shadow-lg ${lesson.available ? 'hover:shadow-2xl cursor-pointer' : 'opacity-60'} transition-all duration-300`}
+            <Link
+              href="/lesson/l1"
+              className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-lg font-semibold text-white shadow-xl transition hover:-translate-y-0.5 hover:shadow-2xl"
             >
-              <div className="flex items-start gap-6">
-                <div className={`text-6xl font-bold bg-gradient-to-br ${lesson.color} bg-clip-text text-transparent`}>
-                  {lesson.num}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-2xl font-bold text-gray-900">{lesson.title}</h3>
-                    {lesson.available ? (
-                      <span className="px-4 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-                        Available Now
-                      </span>
-                    ) : (
-                      <span className="px-4 py-1 bg-gray-100 text-gray-500 rounded-full text-sm font-semibold">
-                        Coming Soon
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-gray-600 mb-2">{lesson.desc}</p>
-                  <p className="text-sm text-gray-500">⏱ {lesson.time}</p>
-                </div>
-                {lesson.available && (
-                  <Link
-                    href="/lesson/l1"
-                    className={`px-6 py-3 bg-gradient-to-r ${lesson.color} text-white rounded-xl font-semibold hover:shadow-lg transition-all`}
-                  >
-                    Start →
-                  </Link>
-                )}
+              <span className="relative z-10">
+                <TranslatableText tKey="nav.startLearning" />
+              </span>
+              <span className="absolute inset-0 translate-y-full bg-gradient-to-r from-purple-600 to-pink-600 transition group-hover:translate-y-0"></span>
+            </Link>
+            <Link
+              href="/teacher"
+              className="rounded-xl border-2 border-indigo-200 bg-white px-8 py-4 text-lg font-semibold text-indigo-600 shadow-lg transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-xl"
+            >
+              <TranslatableText tKey="nav.teacherResources" />
+            </Link>
+          </motion.div>
+        </div>
+      </header>
+
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <h2 className="text-center text-4xl font-bold text-slate-900">How You&apos;ll Learn</h2>
+        <div className="mt-16 grid gap-8 md:grid-cols-3">
+          {featureCards.map((card, index) => (
+            <motion.article
+              key={card.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="rounded-3xl bg-white p-8 shadow-xl ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-2xl"
+            >
+              <div
+                className={`mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${card.gradient}`}
+              >
+                {card.icon}
               </div>
-            </motion.div>
+              <h3 className="text-2xl font-semibold text-slate-900">{card.title}</h3>
+              <p className="mt-3 text-slate-600">{card.description}</p>
+            </motion.article>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Footer */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-12 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-lg mb-2">Built with modern pedagogy principles</p>
-          <p className="text-sm opacity-80">
-            Interactive learning • Immediate feedback • Real-world connections
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <h2 className="text-4xl font-bold text-slate-900">Scope & Sequence</h2>
+            <p className="mt-3 text-lg text-slate-600">
+              Nine short sessions or five extended blocks. Start anywhere and see the learning arc at a glance.
+            </p>
+          </div>
+
+          <div className="space-y-8">
+            {lessonOrder.map((lessonId, index) => {
+              const lesson = lessons[lessonId];
+              const meta = lessonMeta.get(lessonId);
+              const available = availableLessons.has(lessonId);
+              const gradient = meta?.gradient ?? 'from-slate-500 to-slate-700';
+
+              return (
+                <motion.article
+                  key={lessonId}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  className={`flex flex-col gap-6 rounded-3xl border border-slate-100 bg-white p-8 shadow-lg transition ${
+                    available ? 'hover:-translate-y-1 hover:shadow-2xl' : 'opacity-80'
+                  }`}
+                >
+                  <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                    <div className="flex items-start gap-4">
+                      <div
+                        className={`text-5xl font-bold text-transparent bg-gradient-to-br ${gradient} bg-clip-text`}
+                      >
+                        {(index + 1).toString().padStart(2, '0')}
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-semibold text-slate-900">
+                          {safeTranslate(lesson.titleKey, 'en')}
+                        </h3>
+                        <p className="mt-1 text-sm font-medium text-indigo-500">
+                          {meta?.duration ?? 'TBD'}
+                        </p>
+                        <p className="mt-2 text-slate-600">
+                          {meta?.focus ?? 'New lesson experience in development.'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`rounded-full px-4 py-1 text-sm font-semibold ${
+                          available
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-slate-100 text-slate-500'
+                        }`}
+                      >
+                        {available ? 'Available' : 'Coming soon'}
+                      </span>
+                      {available && (
+                        <Link
+                          href={`/lesson/${lessonId}`}
+                          className={`inline-flex items-center gap-2 rounded-xl bg-gradient-to-r ${gradient} px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5`}
+                        >
+                          Start lesson →
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <footer className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 py-12 text-white">
+        <div className="mx-auto max-w-5xl px-6 text-center">
+          <p className="text-lg font-semibold">Built with modern pedagogy principles</p>
+          <p className="mt-2 text-sm text-white/80">
+            Interactive learning · Immediate feedback · Real-world connections
           </p>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
