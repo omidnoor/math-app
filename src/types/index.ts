@@ -1,4 +1,4 @@
-﻿// Core data structures for the quadratics micro-app
+// Core data structures for the quadratics micro-app
 
 export type LessonId = 'l1' | 'l2' | 'l3' | 'l4' | 'l5' | 'l6' | 'l7' | 'l8' | 'l9';
 

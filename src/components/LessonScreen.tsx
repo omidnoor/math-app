@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
@@ -357,7 +357,7 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
                   href={`/lesson/${previousLesson.id}`}
                   className="inline-flex items-center justify-center rounded-xl border-2 border-indigo-300 bg-white px-6 py-3 text-sm font-semibold text-indigo-700 shadow-md transition hover:-translate-y-0.5 hover:border-indigo-400 hover:shadow-lg"
                 >
-                  â† Previous Lesson
+                  ← Previous Lesson
                 </Link>
               )}
             </div>
@@ -378,7 +378,7 @@ export function LessonScreen({ lesson }: LessonScreenProps) {
                   href={`/lesson/${nextLesson.id}`}
                   className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-2xl"
                 >
-                  Next Lesson â†’
+                  Next Lesson →
                 </Link>
               </>
             ) : (

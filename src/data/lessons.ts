@@ -1,4 +1,4 @@
-﻿import type { Lesson, LessonId } from '@/types';
+import type { Lesson, LessonId } from '@/types';
 
 export const lessons: Record<LessonId, Lesson> = {
   l1: {

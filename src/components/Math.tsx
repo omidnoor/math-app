@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { InlineMath, BlockMath } from 'react-katex';
 
